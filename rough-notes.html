@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Rough Notes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Caveat:wght@400;600&family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;1,300&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inconsolata:wght@300;400;600&family=Lora:ital,wght@0,400;0,600;1,400&family=Kalam:wght@300;400;700&family=Satisfy&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0c0c0e;
+      --surface:   #13131a;
+      --border:    rgba(255,255,255,0.09);
+      --border-hi: rgba(255,255,255,0.22);
+      --accent:    #c9a96e;
+      --accent2:   #7b8cde;
+      --danger:    #e05555;
+      --text:      #e8e4dc;
+      --muted:     rgba(232,228,220,0.38);
+      --win-bg:    #0f0f14;
+      --title-bg:  #1a1a24;
+      --ui-font:   'Cormorant Garamond', Georgia, serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; touch-action: none; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--ui-font);
+      height: 100vh;
+      overflow: hidden;
+      -webkit-text-size-adjust: none;
+    }
+
+    /* ── DESKTOP ── */
+    #desktop {
+      position: fixed;
+      top: 56px; left: 0; right: 0; bottom: 0;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    /* ── TOOLBAR ── */
+    #toolbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 56px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 16px;
+      z-index: 9999;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    #toolbar::-webkit-scrollbar { display: none; }
+
+    #brand {
+      font-family: var(--ui-font);
+      font-size: 18px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-right: 8px;
+    }
+
+    .tool-sep {
+      width: 1px; height: 22px;
+      background: var(--border);
+      flex-shrink: 0;
+      margin: 0 4px;
+    }
+
+    .t-btn {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid transparent;
+      font-family: var(--ui-font);
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      padding: 6px 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      border-radius: 2px;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .t-btn:hover, .t-btn:active {
+      color: var(--text);
+      border-color: var(--border-hi);
+      background: rgba(255,255,255,0.04);
+    }
+    .t-btn.primary {
+      color: var(--accent);
+      border-color: rgba(201,169,110,0.35);
+    }
+    .t-btn.primary:hover, .t-btn.primary:active {
+      background: rgba(201,169,110,0.1);
+      border-color: var(--accent);
+    }
+    .t-btn.danger {
+      color: rgba(224,85,85,0.65);
+      border-color: rgba(224,85,85,0.2);
+    }
+    .t-btn.danger:hover, .t-btn.danger:active {
+      background: rgba(224,85,85,0.1);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    #upload-label {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid transparent;
+      font-family: var(--ui-font);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      padding: 6px 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      border-radius: 2px;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #upload-label:hover, #upload-label:active {
+      color: var(--text);
+      border-color: var(--border-hi);
+      background: rgba(255,255,255,0.04);
+    }
+    #upload-file { display: none; }
+
+    #font-select {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      font-family: var(--ui-font);
+      font-size: 13px;
+      padding: 5px 8px;
+      cursor: pointer;
+      flex-shrink: 0;
+      outline: none;
+      border-radius: 2px;
+      max-width: 130px;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    #font-select:hover, #font-select:focus {
+      border-color: var(--border-hi);
+      color: var(--text);
+    }
+    #font-select option { background: #1a1a24; color: var(--text); font-size: 13px; }
+
+    .fs-wrap {
+      display: flex; align-items: center; gap: 4px;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 0 4px;
+    }
+    .fs-btn {
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      font-family: var(--ui-font);
+      font-size: 16px;
+      width: 26px; height: 30px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      border-radius: 2px;
+      transition: color 0.2s, background 0.2s;
+      line-height: 1;
+    }
+    .fs-btn:hover, .fs-btn:active { color: var(--text); background: rgba(255,255,255,0.06); }
+    #fs-display {
+      font-family: var(--ui-font);
+      font-size: 12px;
+      color: var(--muted);
+      min-width: 22px;
+      text-align: center;
+    }
+
+    /* ── NOTE WINDOWS ── */
+    .note-win {
+      position: absolute;
+      min-width: 220px; min-height: 160px;
+      display: flex; flex-direction: column;
+      background: var(--win-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.05) inset;
+      touch-action: none;
+      transition: box-shadow 0.2s, border-color 0.2s;
+      overflow: hidden;
+    }
+    .note-win.focused {
+      border-color: rgba(201,169,110,0.4);
+      box-shadow: 0 12px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,169,110,0.15), 0 1px 0 rgba(255,255,255,0.06) inset;
+    }
+
+    /* ── BUBBLE ── */
+    .bubble {
+      position: absolute;
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      background: var(--title-bg);
+      border: 1.5px solid var(--border-hi);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 500;
+      touch-action: none;
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
+      flex-direction: column; gap: 2px;
+      overflow: hidden;
+    }
+    .bubble:hover {
+      border-color: var(--accent);
+      box-shadow: 0 6px 28px rgba(201,169,110,0.3);
+      transform: scale(1.08);
+    }
+    .bubble-label {
+      font-family: var(--ui-font);
+      font-size: 9px; font-style: italic;
+      color: var(--accent);
+      white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 46px; text-align: center;
+      line-height: 1.2; padding: 0 4px;
+    }
+    .bubble-icon { font-size: 16px; color: var(--muted); line-height: 1; }
+    @keyframes bubbleIn {
+      from { opacity: 0; transform: scale(0.5); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .bubble { animation: bubbleIn 0.2s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+    /* Titlebar */
+    .nw-titlebar {
+      background: var(--title-bg);
+      padding: 0 8px 0 14px;
+      display: flex; align-items: center; gap: 6px;
+      user-select: none; flex-shrink: 0;
+      height: 42px; touch-action: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .note-win.focused .nw-titlebar {
+      border-bottom-color: rgba(201,169,110,0.2);
+    }
+    .nw-name-input {
+      background: transparent; border: none;
+      color: var(--text);
+      font-family: var(--ui-font);
+      font-size: 14px; font-weight: 400; font-style: italic;
+      letter-spacing: 0.02em;
+      flex: 1; outline: none; min-width: 0;
+      padding: 2px 0; touch-action: auto;
+    }
+    .nw-name-input::placeholder { color: var(--muted); }
+
+    .nw-ctrl {
+      background: transparent; color: var(--muted);
+      border: none; width: 30px; height: 30px;
+      border-radius: 4px; font-size: 14px;
+      cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      transition: background 0.15s, color 0.15s;
+      line-height: 1;
+    }
+    .nw-ctrl:hover, .nw-ctrl:active { background: rgba(255,255,255,0.08); color: var(--text); }
+    .nw-ctrl.dl:hover, .nw-ctrl.dl:active { background: rgba(201,169,110,0.15); color: var(--accent); }
+    .nw-ctrl.cls:hover, .nw-ctrl.cls:active { background: rgba(220,60,60,0.18); color: #e05555; }
+
+    .nw-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+    .nw-textarea {
+      flex: 1; background: transparent; color: var(--text);
+      border: none; padding: 16px 18px;
+      font-size: 15px; line-height: 1.75;
+      resize: none; outline: none;
+      touch-action: auto;
+      -webkit-overflow-scrolling: touch;
+      overflow-y: auto;
+      letter-spacing: 0.01em;
+    }
+    .nw-textarea::placeholder { color: var(--muted); font-style: italic; }
+    .nw-textarea::-webkit-scrollbar { width: 4px; }
+    .nw-textarea::-webkit-scrollbar-track { background: transparent; }
+    .nw-textarea::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .nw-resize {
+      position: absolute; right: 0; bottom: 0;
+      width: 40px; height: 40px;
+      cursor: se-resize; touch-action: none; z-index: 10;
+      display: flex; align-items: flex-end; justify-content: flex-end; padding: 8px;
+    }
+    .nw-resize::after {
+      content: '';
+      width: 10px; height: 10px;
+      border-right: 2px solid var(--border-hi);
+      border-bottom: 2px solid var(--border-hi);
+      border-radius: 0 0 2px 0;
+    }
+    .note-win.focused .nw-resize::after { border-color: rgba(201,169,110,0.5); }
+
+    @keyframes noteIn {
+      from { opacity: 0; transform: scale(0.96) translateY(6px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .note-win { animation: noteIn 0.18s ease-out both; }
+
+    /* ── TABS PANEL ── */
+    #tabs-panel {
+      position: fixed;
+      right: 0;
+      top: 56px;
+      bottom: 0;
+      width: 220px;
+      background: #0e0e14;
+      border-left: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      z-index: 5000;
+      transition: transform 0.25s ease;
+      margin-top: 0;
+    }
+    #tabs-panel.hidden { transform: translateX(220px); }
+
+    #tabs-header {
+      padding: 8px 10px 6px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 4px;
+    }
+    #tabs-title {
+      font-family: var(--ui-font);
+      font-size: 11px; letter-spacing: 0.12em;
+      color: var(--muted); text-transform: uppercase;
+      flex: 1;
+    }
+    .tabs-nav-btn {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); font-size: 13px;
+      width: 26px; height: 26px;
+      border-radius: 3px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: color 0.15s, background 0.15s, border-color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      line-height: 1;
+    }
+    .tabs-nav-btn:hover { color: var(--accent); border-color: rgba(201,169,110,0.4); background: rgba(201,169,110,0.07); }
+    #tabs-search {
+      width: 100%; padding: 7px 10px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text);
+      font-family: var(--ui-font);
+      font-size: 13px; outline: none;
+      margin: 8px 14px 6px;
+      width: calc(100% - 28px);
+      transition: border-color 0.2s;
+    }
+    #tabs-search:focus { border-color: var(--border-hi); }
+    #tabs-search::placeholder { color: var(--muted); font-style: italic; }
+
+    #tabs-hint {
+      font-family: var(--ui-font);
+      font-size: 10px; letter-spacing: 0.06em;
+      color: rgba(232,228,220,0.2);
+      text-align: center; padding: 2px 14px 4px;
+    }
+
+    #tabs-list {
+      flex: 1; overflow-y: auto; padding: 4px 0;
+    }
+    #tabs-list::-webkit-scrollbar { width: 3px; }
+    #tabs-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .tab-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border-left: 2px solid transparent;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .tab-item:hover { background: rgba(255,255,255,0.04); }
+    .tab-item.active {
+      background: rgba(201,169,110,0.07);
+      border-left-color: var(--accent);
+    }
+    .tab-item.minimized { opacity: 0.5; }
+    .tab-item-icon {
+      font-size: 13px; color: var(--muted);
+      flex-shrink: 0; width: 16px; text-align: center;
+    }
+    .tab-item.active .tab-item-icon { color: var(--accent); }
+    .tab-item-name {
+      flex: 1; font-family: var(--ui-font);
+      font-size: 13px; font-style: italic;
+      color: var(--text); white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .tab-item-close {
+      background: none; border: none;
+      color: var(--muted); font-size: 11px;
+      width: 18px; height: 18px;
+      cursor: pointer; border-radius: 2px;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.15s, background 0.15s, color 0.15s;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .tab-item:hover .tab-item-close { opacity: 1; }
+    .tab-item-close:hover { background: rgba(220,60,60,0.2); color: #e05555; }
+
+    #tabs-toggle {
+      position: fixed;
+      right: 0;
+      top: calc(56px + (100vh - 56px) / 2);
+      transform: translateY(-50%);
+      z-index: 5001;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-right: none;
+      border-radius: 4px 0 0 4px;
+      padding: 10px 6px;
+      cursor: pointer;
+      color: var(--muted);
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      transition: background 0.2s, color 0.2s, right 0.25s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      writing-mode: vertical-lr;
+      font-family: var(--ui-font);
+      font-size: 11px; letter-spacing: 0.1em;
+    }
+    #tabs-toggle:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+    #tabs-panel:not(.hidden) ~ #tabs-toggle { right: 220px; }
+
+    /* Adjust desktop when panel open */
+    body.panel-open #desktop { right: 220px; }
+    body.panel-open #toolbar { right: 220px; }
+
+    /* ── BIN PANEL ── */
+    #bin-panel {
+      position: fixed;
+      left: 0; bottom: 0;
+      width: 100%; max-height: 240px;
+      background: #0e0e14;
+      border-top: 1px solid var(--border);
+      z-index: 7000;
+      transform: translateY(100%);
+      transition: transform 0.28s cubic-bezier(0.34,1,0.64,1);
+      display: flex; flex-direction: column;
+    }
+    #bin-panel.open { transform: translateY(0); }
+
+    #bin-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    #bin-title {
+      font-family: var(--ui-font);
+      font-size: 11px; letter-spacing: 0.12em;
+      color: var(--muted); text-transform: uppercase; flex: 1;
+    }
+    #bin-close-btn {
+      background: none; border: none;
+      color: var(--muted); cursor: pointer;
+      font-size: 14px; padding: 2px 6px;
+      border-radius: 2px;
+      font-family: var(--ui-font);
+      transition: color 0.2s, background 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    #bin-close-btn:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+
+    .bin-nav-btn {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); font-size: 13px;
+      width: 26px; height: 26px;
+      border-radius: 3px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: color 0.15s, background 0.15s, border-color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      line-height: 1;
+    }
+    .bin-nav-btn:hover { color: var(--accent); border-color: rgba(201,169,110,0.4); background: rgba(201,169,110,0.07); }
+
+    #bin-clear-btn {
+      background: transparent; border: 1px solid rgba(224,85,85,0.2);
+      color: rgba(224,85,85,0.5); font-family: var(--ui-font);
+      font-size: 11px; letter-spacing: 0.06em;
+      padding: 3px 9px; height: 26px;
+      border-radius: 3px; cursor: pointer;
+      flex-shrink: 0;
+      transition: color 0.15s, background 0.15s, border-color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    #bin-clear-btn:hover { color: var(--danger); border-color: var(--danger); background: rgba(224,85,85,0.1); }
+
+    #bin-list {
+      display: flex; gap: 10px;
+      padding: 12px 16px; overflow-x: auto;
+      overflow-y: hidden;
+    }
+    #bin-list::-webkit-scrollbar { height: 3px; }
+    #bin-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    #bin-empty {
+      font-family: var(--ui-font); font-size: 13px; font-style: italic;
+      color: var(--muted); padding: 16px; text-align: center;
+    }
+
+    .bin-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 10px 12px;
+      min-width: 140px; max-width: 200px;
+      cursor: pointer; flex-shrink: 0;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .bin-card:hover { border-color: var(--border-hi); background: rgba(255,255,255,0.03); }
+    .bin-card.bin-selected {
+      border-color: var(--accent);
+      background: rgba(201,169,110,0.08);
+      box-shadow: 0 0 0 1px rgba(201,169,110,0.2);
+    }
+    .bin-card-name {
+      font-family: var(--ui-font); font-size: 13px; font-style: italic;
+      color: var(--text); white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .bin-card-preview {
+      font-family: var(--ui-font); font-size: 11px;
+      color: var(--muted); margin-top: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden; line-height: 1.4;
+    }
+    .bin-card-restore {
+      font-family: var(--ui-font); font-size: 10px; letter-spacing: 0.08em;
+      color: var(--accent); margin-top: 6px; text-align: right;
+    }
+    .bin-card-del {
+      position: absolute; top: 6px; right: 6px;
+      background: none; border: none;
+      color: var(--muted); font-size: 10px;
+      cursor: pointer; padding: 2px 4px;
+      border-radius: 2px;
+      transition: color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .bin-card-del:hover { color: #e05555; background: rgba(220,60,60,0.15); }
+
+    #bin-toggle {
+      position: fixed;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      z-index: 7001;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      padding: 5px 18px 3px;
+      cursor: pointer; color: var(--muted);
+      font-family: var(--ui-font); font-size: 11px; letter-spacing: 0.1em;
+      transition: background 0.2s, color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      display: flex; align-items: center; gap: 6px;
+    }
+    #bin-toggle:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+    #bin-panel.open ~ #bin-toggle { display: none; }
+    #bin-count {
+      background: rgba(201,169,110,0.2);
+      color: var(--accent); border-radius: 8px;
+      font-size: 10px; padding: 1px 6px; font-style: normal;
+    }
+
+    /* ── MODAL ── */
+    #modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 99999;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    #modal-overlay.open { opacity: 1; pointer-events: all; }
+    #modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      border-radius: 8px;
+      padding: 28px 32px 24px;
+      max-width: 360px; width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+      transform: scale(0.95);
+      transition: transform 0.2s;
+      text-align: center;
+    }
+    #modal-overlay.open #modal-box { transform: scale(1); }
+    #modal-title {
+      font-family: var(--ui-font); font-size: 20px; font-weight: 400;
+      color: var(--text); margin-bottom: 10px;
+    }
+    #modal-msg {
+      font-family: var(--ui-font); font-size: 14px; font-style: italic;
+      color: var(--muted); line-height: 1.6; margin-bottom: 24px;
+    }
+    .modal-btns { display: flex; gap: 10px; justify-content: center; }
+    .modal-btn {
+      font-family: var(--ui-font); font-size: 14px; letter-spacing: 0.06em;
+      padding: 8px 22px; border-radius: 2px; cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .modal-btn.cancel {
+      background: transparent; color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .modal-btn.cancel:hover { color: var(--text); border-color: var(--border-hi); }
+    .modal-btn.confirm {
+      background: rgba(224,85,85,0.12);
+      color: #e05555;
+      border: 1px solid rgba(224,85,85,0.4);
+    }
+    .modal-btn.confirm:hover { background: rgba(224,85,85,0.22); border-color: #e05555; }
+  </style>
+</head>
+<body>
+
+<div id="toolbar">
+  <span id="brand">Rough Notes</span>
+
+  <button class="t-btn primary" onclick="createNote()">＋ New</button>
+  <label id="upload-label" for="upload-file">↑ Upload</label>
+  <input type="file" id="upload-file" accept=".txt" multiple onchange="uploadFiles()">
+  <button class="t-btn" onclick="downloadAll()">↓ Save All</button>
+
+  <div class="tool-sep"></div>
+  <button class="t-btn" onclick="minimizeAll()">— Min All</button>
+  <button class="t-btn" onclick="restoreAll()">⬚ Restore</button>
+  <div class="tool-sep"></div>
+  <button class="t-btn danger" onclick="confirmCloseAll()">✕ Close All</button>
+  <div class="tool-sep"></div>
+
+  <select id="font-select" onchange="applyFont(this.value)" title="Font style">
+    <option value="'Caveat',cursive">Caveat</option>
+    <option value="'Special Elite',cursive">Special Elite</option>
+    <option value="'Courier Prime',monospace">Courier Prime</option>
+    <option value="'Merriweather',serif">Merriweather</option>
+    <option value="'Space Mono',monospace">Space Mono</option>
+    <option value="'Inconsolata',monospace">Inconsolata</option>
+    <option value="'Lora',serif">Lora</option>
+    <option value="'Kalam',cursive">Kalam</option>
+    <option value="'Satisfy',cursive">Satisfy</option>
+  </select>
+
+  <div class="fs-wrap">
+    <button class="fs-btn" onclick="changeFontSize(-1)" title="Smaller">−</button>
+    <span id="fs-display">15</span>
+    <button class="fs-btn" onclick="changeFontSize(1)" title="Larger">＋</button>
+  </div>
+</div>
+
+<div id="desktop"></div>
+
+<!-- Tabs panel -->
+<div id="tabs-panel">
+  <div id="tabs-header">
+    <span id="tabs-title">Notes</span>
+    <span id="tabs-count" style="font-family:var(--ui-font);font-size:11px;color:var(--muted)"></span>
+    <button class="tabs-nav-btn" title="Previous note (↑)" onclick="navigateTabs(-1)">↑</button>
+    <button class="tabs-nav-btn" title="Next note (↓)" onclick="navigateTabs(1)">↓</button>
+  </div>
+  <input type="text" id="tabs-search" placeholder="Search notes…" oninput="renderTabs()" autocomplete="off" spellcheck="false">
+  <div id="tabs-hint">↑ ↓ buttons or arrow keys when search is focused</div>
+  <div id="tabs-list"></div>
+</div>
+<div id="tabs-toggle" onclick="toggleTabsPanel()">◧ TABS</div>
+
+<!-- Bin panel -->
+<div id="bin-panel">
+  <div id="bin-header">
+    <span id="bin-title">🗑 Recently Closed</span>
+    <button class="bin-nav-btn" title="Previous" onclick="scrollBin(-1)">←</button>
+    <button class="bin-nav-btn" title="Next" onclick="scrollBin(1)">→</button>
+    <button id="bin-clear-btn" onclick="confirmClearBin()" title="Clear all">🗑 Clear</button>
+    <button id="bin-close-btn" onclick="toggleBin()">✕</button>
+  </div>
+  <div id="bin-list"></div>
+</div>
+<div id="bin-toggle" onclick="toggleBin()">🗑 Bin <span id="bin-count">0</span></div>
+
+<!-- Confirm modal -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <div id="modal-title">Close All Notes?</div>
+    <div id="modal-msg">All open notes will be moved to the Bin. You can restore them from there.</div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn confirm" id="modal-confirm-btn">Close All</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── STATE ── */
+  var noteCount = 0, zTop = 10;
+  var notes = {}, bubbleSlots = {};
+  var currentFont = "'Caveat',cursive";
+  var currentFontSize = 15;
+  var bin = []; // [{id, name, text, font, fontSize}]
+  var tabsPanelOpen = true;
+  var binOpen = false;
+  var focusedId = null;
+
+  /* ── STORAGE ── */
+  var STORE_KEY = 'roughnotes_v1';
+
+  function saveState() {
+    var noteData = {};
+    Object.keys(notes).forEach(function(id) {
+      var nm = document.getElementById('nm-' + id);
+      var ta = document.getElementById('ta-' + id);
+      var win = document.getElementById(id);
+      if (!ta || !win) return;
+      var isBubble = !!document.getElementById('bubble-' + id);
+      noteData[id] = {
+        name: nm ? nm.value : 'Note',
+        text: ta.value,
+        left: win.style.left,
+        top: win.style.top,
+        width: win.style.width,
+        height: win.style.height,
+        minimized: isBubble,
+        savedLeft: notes[id].savedLeft || '',
+        savedTop: notes[id].savedTop || '',
+        savedWidth: notes[id].savedWidth || '',
+        savedHeight: notes[id].savedHeight || '',
+        zIndex: win.style.zIndex
+      };
+    });
+    var state = {
+      // noteCount intentionally NOT saved — recalculated on load
+      zTop: zTop,
+      notes: noteData,
+      bin: bin,
+      currentFont: currentFont,
+      currentFontSize: currentFontSize,
+      tabsPanelOpen: tabsPanelOpen,
+      focusedId: focusedId
+    };
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e){}
+  }
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return false;
+      var state = JSON.parse(raw);
+      currentFont = state.currentFont || "'Caveat',cursive";
+      currentFontSize = state.currentFontSize || 15;
+      document.getElementById('fs-display').textContent = currentFontSize;
+      var sel = document.getElementById('font-select');
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === currentFont) { sel.selectedIndex = i; break; }
+      }
+      bin = state.bin || [];
+      zTop = state.zTop || 10;
+      tabsPanelOpen = state.tabsPanelOpen !== false;
+
+      // Restore notes
+      var noteData = state.notes || {};
+      var ids = Object.keys(noteData);
+      ids.forEach(function(id) {
+        var d = noteData[id];
+        spawnNote(id, d.name, d.text, d.left, d.top, d.width, d.height, parseInt(d.zIndex)||10);
+        notes[id].savedLeft = d.savedLeft;
+        notes[id].savedTop = d.savedTop;
+        notes[id].savedWidth = d.savedWidth;
+        notes[id].savedHeight = d.savedHeight;
+        if (d.minimized) { minimizeNote(id); }
+      });
+
+      // Recalculate noteCount from currently open notes only
+      recalcNoteCount();
+
+      if (state.focusedId && notes[state.focusedId]) {
+        focusNote(state.focusedId);
+      }
+      return true;
+    } catch(e) { return false; }
+  }
+
+  // Recalc noteCount from open notes AND bin — reset to 0 only if both are empty
+  function recalcNoteCount() {
+    var openIds = Object.keys(notes);
+    var binIds = bin.map(function(item) { return item.id; });
+    var allIds = openIds.concat(binIds);
+    if (allIds.length === 0) { noteCount = 0; return; }
+    noteCount = allIds.reduce(function(max, id) {
+      var n = parseInt((id || '').replace('nw-', '')) || 0;
+      return n > max ? n : max;
+    }, 0);
+  }
+
+  // Auto-save every 2 seconds
+  setInterval(saveState, 2000);
+  // Save on page hide/unload
+  window.addEventListener('visibilitychange', function(){ if(document.hidden) saveState(); });
+  window.addEventListener('pagehide', saveState);
+
+  /* ── TABS PANEL ── */
+  function toggleTabsPanel() {
+    tabsPanelOpen = !tabsPanelOpen;
+    document.getElementById('tabs-panel').classList.toggle('hidden', !tabsPanelOpen);
+    document.body.classList.toggle('panel-open', tabsPanelOpen);
+    saveState();
+  }
+
+  function renderTabs() {
+    var list = document.getElementById('tabs-list');
+    var query = document.getElementById('tabs-search').value.toLowerCase().trim();
+    list.innerHTML = '';
+
+    var ids = Object.keys(notes);
+    if (ids.length === 0) {
+      list.innerHTML = '<div style="font-family:var(--ui-font);font-size:13px;font-style:italic;color:var(--muted);padding:16px 14px;">No open notes</div>';
+      document.getElementById('tabs-count').textContent = '';
+      document.getElementById('bin-count').textContent = bin.length;
+      return;
+    }
+
+    // Sort by creation order (stable)
+    ids.sort(function(a, b) {
+      var na = parseInt(a.replace('nw-', '')) || 0;
+      var nb = parseInt(b.replace('nw-', '')) || 0;
+      return na - nb;
+    });
+
+    var filtered = ids.filter(function(id) {
+      if (!query) return true;
+      var nm = document.getElementById('nm-' + id);
+      var ta = document.getElementById('ta-' + id);
+      var name = nm ? nm.value.toLowerCase() : '';
+      var text = ta ? ta.value.toLowerCase() : '';
+      return name.includes(query) || text.includes(query);
+    });
+
+    document.getElementById('tabs-count').textContent = ids.length + ' open';
+    document.getElementById('bin-count').textContent = bin.length;
+
+    filtered.forEach(function(id, i) {
+      var nm = document.getElementById('nm-' + id);
+      var name = nm ? (nm.value.trim() || 'Untitled') : 'Untitled';
+      var isBubble = !!document.getElementById('bubble-' + id);
+      var isActive = id === focusedId;
+
+      var item = document.createElement('div');
+      item.className = 'tab-item' + (isActive ? ' active' : '') + (isBubble ? ' minimized' : '');
+      item.dataset.id = id;
+      item.tabIndex = 0;
+
+      item.innerHTML =
+        '<span class="tab-item-icon">' + (isBubble ? '○' : '✎') + '</span>' +
+        '<span class="tab-item-name">' + esc(name) + '</span>' +
+        '<button class="tab-item-close" title="Close note" onclick="tabCloseNote(event,\'' + id + '\')">✕</button>';
+
+      item.addEventListener('click', function(e) {
+        if (e.target.classList.contains('tab-item-close')) return;
+        if (isBubble) restoreFromBubble(id);
+        focusNote(id);
+        var win = document.getElementById(id);
+        if (win) win.querySelector('.nw-textarea') && win.querySelector('.nw-textarea').focus();
+        renderTabs();
+      });
+
+      list.appendChild(item);
+    });
+  }
+
+  function tabCloseNote(e, id) {
+    e.stopPropagation();
+    closeNote(id);
+  }
+
+  /* Arrow key navigation - works from tabs-search box and from tab items */
+  function navigateTabs(dir) {
+    var ids = getSortedIds();
+    if (ids.length === 0) return;
+    var cur = ids.indexOf(focusedId);
+    var next;
+    if (dir === 1)  next = cur < ids.length - 1 ? cur + 1 : 0;
+    else            next = cur > 0 ? cur - 1 : ids.length - 1;
+    switchToTab(ids[next]);
+  }
+
+  function getSortedIds() {
+    var ids = Object.keys(notes);
+    // stable order by creation (numeric id suffix), not by focus
+    ids.sort(function(a, b) {
+      var na = parseInt(a.replace('nw-', '')) || 0;
+      var nb = parseInt(b.replace('nw-', '')) || 0;
+      return na - nb;
+    });
+    return ids;
+  }
+
+  function switchToTab(id) {
+    var bub = document.getElementById('bubble-' + id);
+    if (bub) restoreFromBubble(id);
+    focusNote(id);
+    renderTabs();
+    var tabItem = document.querySelector('.tab-item[data-id="' + id + '"]');
+    if (tabItem) tabItem.scrollIntoView({block:'nearest'});
+  }
+
+  // Arrow keys work when tabs-search is focused OR when tabs panel area is focused
+  // Also handles bin left/right selection + Enter to restore
+  var binSelectedIndex = -1;
+
+  document.addEventListener('keydown', function(e) {
+    var active = document.activeElement;
+    var tag = active ? active.tagName : '';
+    var isSearch  = active && active.id === 'tabs-search';
+    var isDesktop = !active || tag === 'BODY' || active.id === 'desktop' || active.id === 'tabs-list';
+    var inTextarea = tag === 'TEXTAREA';
+    var inInput    = tag === 'INPUT' && !isSearch;
+
+    // ── TABS: up/down when search focused or nothing focused ──
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      if (isSearch || isDesktop) {
+        e.preventDefault();
+        navigateTabs(e.key === 'ArrowDown' ? 1 : -1);
+        return;
+      }
+    }
+
+    // ── BIN: left/right for selection, Enter to restore ──
+    if (binOpen && bin.length > 0) {
+      if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !inTextarea && !inInput) {
+        e.preventDefault();
+        if (binSelectedIndex < 0) binSelectedIndex = 0;
+        else if (e.key === 'ArrowRight') binSelectedIndex = Math.min(binSelectedIndex + 1, bin.length - 1);
+        else                             binSelectedIndex = Math.max(binSelectedIndex - 1, 0);
+        renderBin();
+        // scroll selected card into view
+        var cards = document.querySelectorAll('.bin-card');
+        if (cards[binSelectedIndex]) cards[binSelectedIndex].scrollIntoView({block:'nearest', inline:'nearest'});
+        return;
+      }
+      if (e.key === 'Enter' && binSelectedIndex >= 0 && !inTextarea && !inInput) {
+        e.preventDefault();
+        restoreBinItem(binSelectedIndex);
+        binSelectedIndex = Math.min(binSelectedIndex, bin.length - 1);
+        renderBin();
+        return;
+      }
+    }
+  });
+
+  /* ── FONT ── */
+  function applyFont(font) {
+    currentFont = font;
+    document.querySelectorAll('.nw-textarea').forEach(function(t){ t.style.fontFamily = font; });
+    saveState();
+  }
+
+  function changeFontSize(d) {
+    currentFontSize = Math.min(32, Math.max(10, currentFontSize + d));
+    document.getElementById('fs-display').textContent = currentFontSize;
+    document.querySelectorAll('.nw-textarea').forEach(function(t){ t.style.fontSize = currentFontSize + 'px'; });
+    saveState();
+  }
+
+  /* ── NOTE CREATION ── */
+  function createNote(text, name) {
+    recalcNoteCount();
+    noteCount++;
+    // Make sure this id isn't already taken (e.g. restored from bin)
+    while (document.getElementById('nw-' + noteCount)) noteCount++;
+    var id = 'nw-' + noteCount;
+    var label = name || 'Note ' + noteCount;
+    var dw = window.innerWidth - (tabsPanelOpen ? 220 : 0);
+    var dh = window.innerHeight - 56;
+    var off = ((noteCount - 1) % 8) * 22;
+    var ww = Math.round(dw * 0.82), wh = Math.round(dh * 0.72);
+    var left = Math.min(12 + off, dw - ww - 12);
+    var top  = Math.min(12 + off, dh - wh - 12);
+
+    spawnNote(id, label, text||'', left+'px', top+'px', ww+'px', wh+'px', ++zTop);
+    renderTabs();
+    saveState();
+    return id;
+  }
+
+  function spawnNote(id, label, text, left, top, width, height, zidx) {
+    var win = document.createElement('div');
+    win.className = 'note-win focused';
+    win.id = id;
+    win.style.cssText = 'left:'+left+';top:'+top+';width:'+width+';height:'+height+';z-index:'+zidx;
+
+    win.innerHTML =
+      '<div class="nw-titlebar" id="tb-'+id+'">'
+      + '<input class="nw-name-input" id="nm-'+id+'" type="text" value="'+esc(label)+'" spellcheck="false" maxlength="60" placeholder="Untitled">'
+      + '<button class="nw-ctrl" title="Minimise" ontouchend="hMin(event,\''+id+'\')" onclick="toggleMin(\''+id+'\')">&#8213;</button>'
+      + '<button class="nw-ctrl dl" title="Download" ontouchend="hDl(event,\''+id+'\')" onclick="downloadNote(\''+id+'\')">&#8595;</button>'
+      + '<button class="nw-ctrl cls" title="Close" ontouchend="hClose(event,\''+id+'\')" onclick="closeNote(\''+id+'\')">&#10005;</button>'
+      + '</div>'
+      + '<div class="nw-body"><textarea class="nw-textarea" id="ta-'+id+'" placeholder="Begin writing…">'+esc(text||'')+'</textarea></div>'
+      + '<div class="nw-resize" id="rz-'+id+'"></div>';
+
+    document.getElementById('desktop').appendChild(win);
+    notes[id] = {};
+
+    var ta = document.getElementById('ta-'+id);
+    ta.style.fontFamily = currentFont;
+    ta.style.fontSize   = currentFontSize + 'px';
+
+    // Auto-save on text change
+    ta.addEventListener('input', function(){ saveState(); renderTabs(); });
+
+    // Save on name change
+    var nm = document.getElementById('nm-'+id);
+    nm.addEventListener('input', function(){ saveState(); renderTabs(); });
+
+    focusNote(id);
+    setupDrag(win, document.getElementById('tb-'+id));
+    setupResize(win, document.getElementById('rz-'+id));
+
+    win.addEventListener('mousedown',  function(){ focusNote(id); renderTabs(); });
+    win.addEventListener('touchstart', function(){ focusNote(id); renderTabs(); }, {passive:true});
+
+    nm.addEventListener('mousedown', function(e){ e.stopPropagation(); });
+    nm.addEventListener('touchstart', function(e){ e.stopPropagation(); }, {passive:true});
+
+    ta.focus();
+    return id;
+  }
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  function hMin(e,id)  { e.preventDefault(); toggleMin(id); }
+  function hDl(e,id)   { e.preventDefault(); downloadNote(id); }
+  function hClose(e,id){ e.preventDefault(); closeNote(id); }
+
+  function focusNote(id){
+    document.querySelectorAll('.note-win').forEach(function(w){ w.classList.remove('focused'); });
+    var w = document.getElementById(id);
+    if(w){ w.classList.add('focused'); w.style.zIndex = ++zTop; }
+    focusedId = id;
+  }
+
+  /* ── CLOSE → BIN ── */
+  function closeNote(id) {
+    var nm  = document.getElementById('nm-'+id);
+    var ta  = document.getElementById('ta-'+id);
+    var name = nm ? (nm.value.trim() || 'Untitled') : 'Untitled';
+    var text = ta ? ta.value : '';
+
+    // Add to bin
+    bin.unshift({ id: id, name: name, text: text, font: currentFont, fontSize: currentFontSize, ts: Date.now() });
+    if (bin.length > 30) bin = bin.slice(0, 30); // keep last 30
+
+    var bub = document.getElementById('bubble-'+id);
+    if (bub) bub.remove();
+    delete bubbleSlots[id];
+    var el = document.getElementById(id);
+    if(el){ el.style.transition='opacity 0.15s,transform 0.15s'; el.style.opacity='0'; el.style.transform='scale(0.95)'; setTimeout(function(){ el.remove(); },150); }
+    delete notes[id];
+    if (focusedId === id) focusedId = null;
+    recalcNoteCount();
+    renderTabs();
+    renderBin();
+    saveState();
+  }
+
+  /* ── CLOSE ALL ── */
+  function confirmCloseAll() {
+    var count = Object.keys(notes).length;
+    if (count === 0) return;
+    document.getElementById('modal-msg').textContent = count + ' note' + (count===1?'':'s') + ' will be moved to the Bin. You can restore them from there.';
+    var btn = document.getElementById('modal-confirm-btn');
+    btn.onclick = function() { closeModal(); closeAllNotes(); };
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+
+  function closeAllNotes() {
+    var ids = Object.keys(notes).slice();
+    ids.forEach(function(id) { closeNote(id); });
+  }
+
+  // Close modal on overlay click
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  /* ── BIN ── */
+  function toggleBin() {
+    binOpen = !binOpen;
+    if (!binOpen) binSelectedIndex = -1;
+    document.getElementById('bin-panel').classList.toggle('open', binOpen);
+  }
+
+  function renderBin() {
+    var list = document.getElementById('bin-list');
+    document.getElementById('bin-count').textContent = bin.length;
+    if (bin.length === 0) {
+      list.innerHTML = '<div id="bin-empty">Bin is empty</div>';
+      binSelectedIndex = -1;
+      return;
+    }
+    // clamp selection
+    if (binSelectedIndex >= bin.length) binSelectedIndex = bin.length - 1;
+    list.innerHTML = '';
+    bin.forEach(function(item, i) {
+      var card = document.createElement('div');
+      card.className = 'bin-card' + (i === binSelectedIndex ? ' bin-selected' : '');
+      card.title = 'Click to restore';
+      var preview = item.text ? item.text.substring(0, 80).replace(/\n/g,' ') : '';
+      card.innerHTML =
+        '<div class="bin-card-name">' + esc(item.name) + '</div>' +
+        (preview ? '<div class="bin-card-preview">' + esc(preview) + '</div>' : '') +
+        '<div class="bin-card-restore">↩ restore</div>' +
+        '<button class="bin-card-del" title="Delete permanently" onclick="deleteBinItem(event,' + i + ')">✕</button>';
+      card.addEventListener('click', function(e) {
+        if (e.target.classList.contains('bin-card-del')) return;
+        binSelectedIndex = i;
+        restoreBinItem(i);
+      });
+      list.appendChild(card);
+    });
+  }
+
+  function restoreBinItem(i) {
+    var item = bin[i];
+    if (!item) return;
+    bin.splice(i, 1);
+    createNote(item.text, item.name);
+    renderBin();
+    saveState();
+  }
+
+  function deleteBinItem(e, i) {
+    e.stopPropagation();
+    bin.splice(i, 1);
+    renderBin();
+    saveState();
+  }
+
+  function scrollBin(dir) {
+    if (bin.length === 0) return;
+    if (binSelectedIndex < 0) binSelectedIndex = 0;
+    else binSelectedIndex = Math.max(0, Math.min(binSelectedIndex + dir, bin.length - 1));
+    renderBin();
+    var cards = document.querySelectorAll('.bin-card');
+    if (cards[binSelectedIndex]) cards[binSelectedIndex].scrollIntoView({block:'nearest', inline:'nearest'});
+  }
+
+  function confirmClearBin() {
+    if (bin.length === 0) return;
+    document.getElementById('modal-title').textContent = 'Clear Bin?';
+    document.getElementById('modal-msg').textContent = bin.length + ' deleted note' + (bin.length === 1 ? '' : 's') + ' will be permanently removed. This cannot be undone.';
+    var btn = document.getElementById('modal-confirm-btn');
+    btn.textContent = 'Clear Bin';
+    btn.onclick = function() { closeModal(); bin = []; renderBin(); saveState(); btn.textContent = 'Close All'; document.getElementById('modal-title').textContent = 'Close All Notes?'; };
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  /* ── BUBBLE SYSTEM ── */
+  function getFreeBubblePos() {
+    var dw = window.innerWidth - (tabsPanelOpen ? 220 : 0);
+    var dh = window.innerHeight - 56;
+    var cols = Math.floor((dw - 20) / 70);
+    var used = Object.values(bubbleSlots);
+    for (var slot = 0; slot < 40; slot++) {
+      var col = slot % cols, row = Math.floor(slot / cols);
+      var bx = 12 + col * 70, by = dh - 70 - row * 70;
+      var clash = used.some(function(p){ return Math.abs(p.bx-bx)<60 && Math.abs(p.by-by)<60; });
+      if (!clash) return {bx:bx, by:by};
+    }
+    return {bx:12, by:dh-70};
+  }
+
+  function toggleMin(id) {
+    var existing = document.getElementById('bubble-'+id);
+    if (existing) { restoreFromBubble(id); return; }
+    minimizeNote(id);
+  }
+
+  function minimizeNote(id) {
+    var win = document.getElementById(id); if (!win) return;
+    var nm = document.getElementById('nm-'+id);
+    var label = nm ? (nm.value.trim() || 'Note') : 'Note';
+    notes[id].savedLeft   = win.style.left;
+    notes[id].savedTop    = win.style.top;
+    notes[id].savedWidth  = win.style.width;
+    notes[id].savedHeight = win.style.height;
+    win.style.display = 'none';
+
+    var pos = getFreeBubblePos();
+    bubbleSlots[id] = pos;
+
+    var bub = document.createElement('div');
+    bub.className = 'bubble';
+    bub.id = 'bubble-' + id;
+    bub.style.left = pos.bx + 'px';
+    bub.style.top  = pos.by + 'px';
+    bub.style.zIndex = ++zTop;
+    var short = label.substring(0, 6);
+    bub.innerHTML = '<span class="bubble-icon">✎</span><span class="bubble-label">'+esc(short)+'</span>';
+
+    bub.addEventListener('click', function(){ restoreFromBubble(id); });
+    bub.addEventListener('touchend', function(e){ if(!bub._dragged){ restoreFromBubble(id); } e.preventDefault(); }, {passive:false});
+    document.getElementById('desktop').appendChild(bub);
+    setupBubbleDrag(bub, id);
+    renderTabs();
+    saveState();
+  }
+
+  function restoreFromBubble(id) {
+    var bub = document.getElementById('bubble-'+id);
+    if (bub) bub.remove();
+    delete bubbleSlots[id];
+    var win = document.getElementById(id); if (!win) return;
+    win.style.display = '';
+    if (notes[id] && notes[id].savedLeft) {
+      win.style.left   = notes[id].savedLeft;
+      win.style.top    = notes[id].savedTop;
+      win.style.width  = notes[id].savedWidth;
+      win.style.height = notes[id].savedHeight;
+    }
+    focusNote(id);
+    renderTabs();
+    saveState();
+  }
+
+  function minimizeAll() {
+    Object.keys(notes).forEach(function(id) {
+      var win = document.getElementById(id);
+      if (win && win.style.display !== 'none') minimizeNote(id);
+    });
+  }
+  function restoreAll() {
+    Object.keys(notes).forEach(function(id) {
+      var bub = document.getElementById('bubble-'+id);
+      if (bub) restoreFromBubble(id);
+    });
+  }
+
+  function setupBubbleDrag(bub, id) {
+    var dragging = false, ox = 0, oy = 0;
+    function start(cx,cy){ dragging=true; bub._dragged=false; ox=cx-bub.offsetLeft; oy=cy-bub.offsetTop; }
+    function move(cx,cy){
+      if(!dragging) return; bub._dragged=true;
+      var bx = Math.max(0,Math.min(cx-ox,window.innerWidth-58));
+      var by = Math.max(0,Math.min(cy-oy,window.innerHeight-56-58));
+      bub.style.left=bx+'px'; bub.style.top=by+'px';
+      bubbleSlots[id]={bx:bx,by:by};
+    }
+    function end(){ dragging=false; }
+    bub.addEventListener('mousedown',function(e){ start(e.clientX,e.clientY); e.preventDefault(); });
+    bub.addEventListener('touchstart',function(e){ start(e.touches[0].clientX,e.touches[0].clientY); e.preventDefault(); },{passive:false});
+    document.addEventListener('mousemove',function(e){ move(e.clientX,e.clientY); });
+    document.addEventListener('touchmove',function(e){ if(!dragging)return; move(e.touches[0].clientX,e.touches[0].clientY); e.preventDefault(); },{passive:false});
+    document.addEventListener('mouseup',end); document.addEventListener('touchend',end);
+  }
+
+  /* ── DOWNLOAD ── */
+  function downloadNote(id){
+    var nm=document.getElementById('nm-'+id), ta=document.getElementById('ta-'+id);
+    triggerDl(ta?ta.value:'', san(nm?nm.value.trim():'note')+'.txt');
+  }
+  function downloadAll(){ Object.keys(notes).forEach(function(id,i){ setTimeout(function(){ downloadNote(id); },i*160); }); }
+
+  function uploadFiles(){
+    var inp=document.getElementById('upload-file');
+    Array.from(inp.files).forEach(function(f){
+      var r=new FileReader();
+      r.onload=function(e){ createNote(e.target.result, f.name.replace(/\.txt$/i,'')); };
+      r.readAsText(f);
+    });
+    inp.value='';
+  }
+
+  function triggerDl(text,name){
+    var b=new Blob([text],{type:'text/plain'}),u=URL.createObjectURL(b),a=document.createElement('a');
+    a.href=u; a.download=name; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u);
+  }
+  function san(n){ return n.replace(/[\\/:*?"<>|]/g,'_')||'note'; }
+
+  /* ── DRAG ── */
+  function setupDrag(win,handle){
+    var drag=false,ox=0,oy=0;
+    function start(cx,cy){ drag=true; ox=cx-win.offsetLeft; oy=cy-win.offsetTop; }
+    function move(cx,cy){
+      if(!drag) return;
+      var maxRight = window.innerWidth - (tabsPanelOpen ? 220 : 0) - win.offsetWidth;
+      win.style.left=Math.max(0,Math.min(cx-ox,maxRight))+'px';
+      win.style.top =Math.max(0,Math.min(cy-oy,window.innerHeight-56-win.offsetHeight))+'px';
+    }
+    function end(){ drag=false; if(drag===false) saveState(); }
+    handle.addEventListener('mousedown',function(e){ if(e.target.tagName==='INPUT'||e.target.tagName==='BUTTON') return; start(e.clientX,e.clientY); e.preventDefault(); });
+    handle.addEventListener('touchstart',function(e){ if(e.target.tagName==='INPUT'||e.target.tagName==='BUTTON') return; start(e.touches[0].clientX,e.touches[0].clientY); e.preventDefault(); },{passive:false});
+    document.addEventListener('mousemove',function(e){ move(e.clientX,e.clientY); });
+    document.addEventListener('touchmove',function(e){ if(!drag)return; move(e.touches[0].clientX,e.touches[0].clientY); e.preventDefault(); },{passive:false});
+    document.addEventListener('mouseup',function(){ if(drag){drag=false;saveState();} });
+    document.addEventListener('touchend',function(){ if(drag){drag=false;saveState();} });
+    document.addEventListener('touchcancel',function(){ drag=false; });
+  }
+
+  /* ── RESIZE ── */
+  function setupResize(win,handle){
+    var rsz=false,sx,sy,sw,sh;
+    function start(cx,cy){ rsz=true; sx=cx; sy=cy; sw=win.offsetWidth; sh=win.offsetHeight; }
+    function move(cx,cy){ if(!rsz)return; win.style.width=Math.max(220,sw+cx-sx)+'px'; if(!win.classList.contains('minimized')) win.style.height=Math.max(160,sh+cy-sy)+'px'; }
+    function end(){ if(rsz){ rsz=false; saveState(); } }
+    handle.addEventListener('mousedown',function(e){ start(e.clientX,e.clientY); e.preventDefault(); e.stopPropagation(); });
+    handle.addEventListener('touchstart',function(e){ start(e.touches[0].clientX,e.touches[0].clientY); e.preventDefault(); e.stopPropagation(); },{passive:false});
+    document.addEventListener('mousemove',function(e){ move(e.clientX,e.clientY); });
+    document.addEventListener('touchmove',function(e){ if(!rsz)return; move(e.touches[0].clientX,e.touches[0].clientY); e.preventDefault(); },{passive:false});
+    document.addEventListener('mouseup',end); document.addEventListener('touchend',end); document.addEventListener('touchcancel',end);
+  }
+
+  /* ── INIT ── */
+  // Apply tabs panel state
+  if (!tabsPanelOpen) {
+    document.getElementById('tabs-panel').classList.add('hidden');
+    document.body.classList.remove('panel-open');
+  } else {
+    document.body.classList.add('panel-open');
+  }
+
+  var restored = loadState();
+  if (!restored) {
+    createNote();
+  }
+  renderTabs();
+  renderBin();
+</script>
+</body>
+</html>
