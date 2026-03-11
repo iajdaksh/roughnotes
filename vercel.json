@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "/", "dest": "/rough-notes.html" },
+    { "src": "/(.*)", "dest": "/rough-notes.html" }
+  ]
+}
